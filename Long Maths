@@ -1,28 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 struct LN
 {
-	void create(int a);
-	void create(unsigned int a);
-	void create(const char *a);
+	LN(int a);
+	LN(unsigned int a);
+	LN(const char *a);
 	void add(const LN &b);
 	void sub(const LN &b);
 	void print();
+	~LN();
+private:
 	unsigned char *number;
 	size_t length;
 	bool sign;
 };
-void LN::create(unsigned int a)
+LN::LN(unsigned int a)
 {
 	sign = false;
 	length = 0;
 	if (a == 0)
 	{
 		length = 1;
-		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
-		number = q;
+
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
 		number[0] = 48;
 	}
 	else
@@ -33,8 +31,7 @@ void LN::create(unsigned int a)
 			c /= 10;
 			length++;
 		}
-		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
-		number = q;
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
 		for (unsigned int i = 0; i < length; i++)
 		{
 			number[i] = a%10 + '0';
@@ -42,8 +39,9 @@ void LN::create(unsigned int a)
 		}
 	}
 
+
 }
-void LN::create(int a)
+LN::LN(int a)
 {
 	length = 0;
 	int c = 0;
@@ -58,13 +56,11 @@ void LN::create(int a)
 	}
 	if ( length != 0)
 	{
-		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
-		number = q;
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
 	}
 	else
 	{
-		unsigned char *q = (unsigned char*)malloc(sizeof(unsigned char));
-		number = q;
+		number = (unsigned char*)malloc(sizeof(unsigned char));
 		number[0] = '0';
 		sign = false;
 		length = 1;
@@ -89,14 +85,13 @@ void LN::create(int a)
 		}
 	}
 }
-void LN::create(const char *a)
+LN::LN(const char *a)
 {
 	if (a[0] == '-')
 	{
 		length = strlen(a)-1;
 		sign = true;
-		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
-		number = q;
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
 		for (unsigned int i = 0; i<length; i++)
 			number[length - i - 1] = a[i];
 	}
@@ -104,11 +99,14 @@ void LN::create(const char *a)
 	{
 		length = strlen(a);
 		sign = false;
-		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
-		number = q;
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
 		for (unsigned int i = 0; i<length; i++)
 			number[length - i - 1] = a[i];
 	}
+}
+LN::~LN()
+{
+	free(number);
 }
 void LN::print()
 {
@@ -129,7 +127,7 @@ void LN::add(const LN &a)
 			{
 				int first = number[i] - '0';
 				int second = a.number[i] - '0';
-				if (second>9)
+				if (i >= a.length)
 					second = 0;
 				int result = first + second + base;
 				base = false;
@@ -148,7 +146,7 @@ void LN::add(const LN &a)
 			for (unsigned int i = 0; i < a.length; i++)
 			{
 				int first = number[i] - '0';
-				if (first>9)
+				if (i >= length)
 					first = 0;
 				int second = a.number[i] - '0';
 				int result = first + second + base;
@@ -161,20 +159,17 @@ void LN::add(const LN &a)
 				number[i] = result + '0';
 			}
 		}
-
-
 	}
 	/*else
 	{
+
 
 	}*/
 }
 int main(void)
 {
-	LN t, b;
+	LN t(30000000), b(28);
 	unsigned int a = 2325678460;
-	t.create(1506);
-	b.create(20748);
 	/*printf("%i \n", t.length);
 	for(int i = t.length - 1; i>=0; i--)
 		printf("%c", t.number[i]);
