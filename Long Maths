@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
 struct LN
 {
 	LN(int a);
@@ -119,19 +124,33 @@ void LN::print()
 void LN::add(const LN &a)
 {
 	bool base = false;
+	int first = 0, second = 0, result = 0;
 	if (sign == a.sign)
 	{
 		if (length >= a.length)
 		{
 			for (unsigned int i = 0; i < length; i++)
 			{
-				int first = number[i] - '0';
-				int second = a.number[i] - '0';
+				result = 0;
+				first = number[i] - '0';
+				
 				if (i >= a.length)
 					second = 0;
-				int result = first + second + base;
+				else
+					second = a.number[i] - '0';
+				result = first + second + base;
 				base = false;
-				if (result>=10)
+				if ((result >= 10) && (i == length - 1))
+				{
+					length++;
+					result -= 10;
+					base = true;
+					number = (unsigned char*)realloc(number, length*sizeof(unsigned char));
+					number[i] = result + '0';
+					number[i+1] = 1 + '0';
+					break;
+				}
+				if (result >= 10)
 				{
 					result -= 10;
 					base = true;
@@ -145,11 +164,12 @@ void LN::add(const LN &a)
 			length = a.length;
 			for (unsigned int i = 0; i < a.length; i++)
 			{
-				int first = number[i] - '0';
 				if (i >= length)
 					first = 0;
-				int second = a.number[i] - '0';
-				int result = first + second + base;
+				else
+					first = number[i] - '0';
+				second = a.number[i] - '0';
+				result = first + second + base;
 				base = false;
 				if (result>=10)
 				{
@@ -160,24 +180,43 @@ void LN::add(const LN &a)
 			}
 		}
 	}
-	/*else
+	else
 	{
+		if (length > a.length)
+		{
+			if (sign < a.sign)
+			{
+				int templeng = length;
+				for (int i = 0; i < templeng; i++)
+				{
+					first = number[i] - '0';
+					if (i >= a.length)
+						second = 0;
+					else
+						second = a.number[i] - '0';
+					result = first - second - base;
+					base = false;
+					if (result < 0)
+					{
+						result +=10;
+						base = true;
+					}
+					number[i] = result + '0';
+				}
+				for (int i = templeng-1; number[i] != 0; i--)
 
-
-	}*/
+			}
+		}
+	}
 }
 int main(void)
 {
-	LN t(30000000), b(28);
+	LN t(119998), b(-99998);
 	unsigned int a = 2325678460;
-	/*printf("%i \n", t.length);
-	for(int i = t.length - 1; i>=0; i--)
-		printf("%c", t.number[i]);
-	printf("\n");
-	printf("%i \n", t.sign);*/
 	t.print();
 	b.print();
 	t.add(b);
 	t.print();
 	return 0;
 }
+
