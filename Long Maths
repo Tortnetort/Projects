@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct LN
+{
+	void create(int a);
+	void create(unsigned int a);
+	void create(const char *a);
+	void add(const LN &b);
+	void sub(const LN &b);
+	void print();
+	unsigned char *number;
+	size_t length;
+	bool sign;
+};
+void LN::create(unsigned int a)
+{
+	sign = false;
+	length = 0;
+	if (a == 0)
+	{
+		length = 1;
+		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
+		number = q;
+		number[0] = 48;
+	}
+	else
+	{
+		unsigned int c = a;
+		while (c != 0)
+		{
+			c /= 10;
+			length++;
+		}
+		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
+		number = q;
+		for (unsigned int i = 0; i < length; i++)
+		{
+			number[i] = a%10 + '0';
+			a /= 10;
+		}
+	}
+
+}
+void LN::create(int a)
+{
+	length = 0;
+	int c = 0;
+	if (a<0)
+		c = -a;
+	else
+		c = a;
+	while (c != 0)
+	{
+		c /= 10;
+		length++;
+	}
+	if ( length != 0)
+	{
+		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
+		number = q;
+	}
+	else
+	{
+		unsigned char *q = (unsigned char*)malloc(sizeof(unsigned char));
+		number = q;
+		number[0] = '0';
+		sign = false;
+		length = 1;
+	}
+	if (a>0)
+	{
+		sign = false;
+		for (unsigned int i = 0; i<length; i++)
+		{
+			number[i] = a%10 + '0';
+			a /= 10;
+		}
+	}
+	if (a<0)
+	{
+		sign = true;
+		a *= -1;
+		for (unsigned int i = 0; i<length; i++)
+		{
+			number[i] = a%10  + '0';
+			a /= 10;
+		}
+	}
+}
+void LN::create(const char *a)
+{
+	if (a[0] == '-')
+	{
+		length = strlen(a)-1;
+		sign = true;
+		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
+		number = q;
+		for (unsigned int i = 0; i<length; i++)
+			number[length - i - 1] = a[i];
+	}
+	else
+	{
+		length = strlen(a);
+		sign = false;
+		unsigned char *q = (unsigned char*)malloc(length*sizeof(unsigned char));
+		number = q;
+		for (unsigned int i = 0; i<length; i++)
+			number[length - i - 1] = a[i];
+	}
+}
+void LN::print()
+{
+	if (sign == true)
+		printf("-");
+	for(int i = length - 1; i>=0; i--)
+		printf("%c", number[i]);
+	printf("\n");
+}
+void LN::add(const LN &a)
+{
+	bool base = false;
+	if (sign == a.sign)
+	{
+		if (length >= a.length)
+		{
+			for (unsigned int i = 0; i < length; i++)
+			{
+				int first = number[i] - '0';
+				int second = a.number[i] - '0';
+				if (second>9)
+					second = 0;
+				int result = first + second + base;
+				base = false;
+				if (result>=10)
+				{
+					result -= 10;
+					base = true;
+				}
+				number[i] = result + '0';
+			}
+		}
+		else
+		{
+			number = (unsigned char*)realloc(number, a.length*sizeof(unsigned char));
+			length = a.length;
+			for (unsigned int i = 0; i < a.length; i++)
+			{
+				int first = number[i] - '0';
+				if (first>9)
+					first = 0;
+				int second = a.number[i] - '0';
+				int result = first + second + base;
+				base = false;
+				if (result>=10)
+				{
+					result -= 10;
+					base = true;
+				}
+				number[i] = result + '0';
+			}
+		}
+
+
+	}
+	/*else
+	{
+
+	}*/
+}
+int main(void)
+{
+	LN t, b;
+	unsigned int a = 2325678460;
+	t.create(1506);
+	b.create(20748);
+	/*printf("%i \n", t.length);
+	for(int i = t.length - 1; i>=0; i--)
+		printf("%c", t.number[i]);
+	printf("\n");
+	printf("%i \n", t.sign);*/
+	t.print();
+	b.print();
+	t.add(b);
+	t.print();
+	return 0;
+}
