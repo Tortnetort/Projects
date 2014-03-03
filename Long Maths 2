@@ -1,0 +1,230 @@
+//Create  - принимает int, uint строчку символов, из которого создает число
+//Print() печатает число на экран
+//Название структур - LN
+//void add(const LN &a)
+//void sub(const LN &a)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+struct LN
+{
+	LN(int a);
+	LN(unsigned int a);
+	LN(const char *a);
+	void add(const LN &b);
+	void sub(const LN &b);
+	void print();
+	~LN();
+private:
+	unsigned char *number;
+	size_t length;
+	bool sign;
+};
+LN::LN(unsigned int a)
+{
+	sign = false;
+	length = 0;
+	if (a == 0)
+	{
+		length = 1;
+
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
+		number[0] = 48;
+	}
+	else
+	{
+		unsigned int c = a;
+		while (c != 0)
+		{
+			c /= 10;
+			length++;
+		}
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
+		for (unsigned int i = 0; i < length; i++)
+		{
+			number[i] = a%10 + '0';
+			a /= 10;
+		}
+	}
+
+
+}
+LN::LN(int a)
+{
+	length = 0;
+	int c = 0;
+	if (a<0)
+		c = -a;
+	else
+		c = a;
+	while (c != 0)
+	{
+		c /= 10;
+		length++;
+	}
+	if ( length != 0)
+	{
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
+	}
+	else
+	{
+		number = (unsigned char*)malloc(sizeof(unsigned char));
+		number[0] = '0';
+		sign = false;
+		length = 1;
+	}
+	if (a>0)
+	{
+		sign = false;
+		for (unsigned int i = 0; i<length; i++)
+		{
+			number[i] = a%10 + '0';
+			a /= 10;
+		}
+	}
+	if (a<0)
+	{
+		sign = true;
+		a *= -1;
+		for (unsigned int i = 0; i<length; i++)
+		{
+			number[i] = a%10  + '0';
+			a /= 10;
+		}
+	}
+}
+LN::LN(const char *a)
+{
+	if (a[0] == '-')
+	{
+		length = strlen(a)-1;
+		sign = true;
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
+		for (unsigned int i = 0; i<length; i++)
+			number[length - i - 1] = a[i];
+	}
+	else
+	{
+		length = strlen(a);
+		sign = false;
+		number = (unsigned char*)malloc(length*sizeof(unsigned char));
+		for (unsigned int i = 0; i<length; i++)
+			number[length - i - 1] = a[i];
+	}
+}
+LN::~LN()
+{
+	free(number);
+}
+void LN::print()
+{
+	if (sign == true)
+		printf("-");
+	for(int i = length - 1; i>=0; i--)
+		printf("%c", number[i]);
+	printf("\n");
+}
+void LN::add(const LN &a)
+{
+	bool base = false;
+	int k = length;
+	int first = 0, second = 0, result = 0;
+	if (sign == a.sign)
+	{
+		if (length >= a.length)
+		{
+			for (unsigned int i = 0; i < length; i++)
+			{
+				if (i >= k)
+					first = 0;
+				else
+					first = number[i] - '0';
+				if (i >= a.length)
+					second = 0;
+				else
+					second = a.number[i] - '0';
+				result = first + second + base;
+				base = false;
+				if (result >= 10)
+				{
+					result -= 10;
+					base = true;
+					if (i == length - 1)
+					{
+						length++;
+						number = (unsigned char*)realloc(number, length*sizeof(unsigned char));
+					}
+				}
+				number[i] = result + '0';
+			}
+		}
+		else
+		{
+			for (unsigned int i = 0; i < length; i++)
+			{
+				if (i >= k)
+					first = 0;
+				else
+					first = number[i] - '0';
+				if (i >= a.length)
+					second = 0;
+				else
+					second = a.number[i] - '0';
+				result = first + second + base;
+				base = false;
+				if (result >= 10)
+				{
+					result -= 10;
+					base = true;
+					if (i == length - 1)
+					{
+						length++;
+						number = (unsigned char*)realloc(number, length*sizeof(unsigned char));
+					}
+				}
+				number[i] = result + '0';
+			}
+		}
+	}
+	/*else
+	{
+		if (length > a.length)
+		{
+			if (sign < a.sign)
+			{
+				int templeng = length;
+				for (int i = 0; i < templeng; i++)
+				{
+					first = number[i] - '0';
+					if (i >= a.length)
+						second = 0;
+					else
+						second = a.number[i] - '0';
+					result = first - second - base;
+					base = false;
+					if (result < 0)
+					{
+						result +=10;
+						base = true;
+					}
+					number[i] = result + '0';
+				}
+				for (int i = templeng-1; number[i] != 0; i--)
+
+			}
+		}
+	}*/
+}
+int main(void)
+{
+	LN t(99), b(999);
+	unsigned int a = 2325678460;
+	t.print();
+	b.print();
+	t.add(b);
+	t.print();
+	return 0;
+}
