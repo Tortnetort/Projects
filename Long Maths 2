@@ -1,9 +1,3 @@
-//Create  - принимает int, uint строчку символов, из которого создает число
-//Print() печатает число на экран
-//Название структур - LN
-//void add(const LN &a)
-//void sub(const LN &a)
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -130,15 +124,13 @@ void LN::print()
 void LN::add(const LN &a)
 {
 	bool base = false;
-	int k = length;
+	size_t templen = length;
 	int first = 0, second = 0, result = 0;
 	if (sign == a.sign)
 	{
-		if (length >= a.length)
-		{
-			for (unsigned int i = 0; i < length; i++)
+		for (size_t i = 0; i < length; i++)
 			{
-				if (i >= k)
+				if (i >= templen)
 					first = 0;
 				else
 					first = number[i] - '0';
@@ -160,67 +152,11 @@ void LN::add(const LN &a)
 				}
 				number[i] = result + '0';
 			}
-		}
-		else
-		{
-			for (unsigned int i = 0; i < length; i++)
-			{
-				if (i >= k)
-					first = 0;
-				else
-					first = number[i] - '0';
-				if (i >= a.length)
-					second = 0;
-				else
-					second = a.number[i] - '0';
-				result = first + second + base;
-				base = false;
-				if (result >= 10)
-				{
-					result -= 10;
-					base = true;
-					if (i == length - 1)
-					{
-						length++;
-						number = (unsigned char*)realloc(number, length*sizeof(unsigned char));
-					}
-				}
-				number[i] = result + '0';
-			}
-		}
 	}
-	/*else
-	{
-		if (length > a.length)
-		{
-			if (sign < a.sign)
-			{
-				int templeng = length;
-				for (int i = 0; i < templeng; i++)
-				{
-					first = number[i] - '0';
-					if (i >= a.length)
-						second = 0;
-					else
-						second = a.number[i] - '0';
-					result = first - second - base;
-					base = false;
-					if (result < 0)
-					{
-						result +=10;
-						base = true;
-					}
-					number[i] = result + '0';
-				}
-				for (int i = templeng-1; number[i] != 0; i--)
-
-			}
-		}
-	}*/
 }
 int main(void)
 {
-	LN t(99), b(999);
+	LN t(9), b(9999);
 	unsigned int a = 2325678460;
 	t.print();
 	b.print();
